@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/DataDog/datadog-go/statsd"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -39,22 +40,40 @@ var (
 		Name: "simpleapp_summary",
 		Help: "summary demo",
 	})
+
+	c *statsd.Client
 )
 
 func main() {
 
+	// Create the client
+	c, err := statsd.New("127.0.0.1:8125")
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Prefix every metric with the app name
+	c.Namespace = "golang."
+
+	// Send global Tags
+	c.Tags = append(c.Tags, "indo-east-1a")
+
 	http.Handle("/metrics", promhttp.Handler())
-	http.Handle("/api/hello", sayHello())
+	http.Handle("/api/hello", metrics(sayHelloHandler))
 	log.Println("server running on port :2112")
 	http.ListenAndServe(":2112", nil)
 }
 
-func sayHello() http.HandlerFunc {
+func metrics(handler http.HandlerFunc) http.HandlerFunc {
 	start := time.Now()
+
+	// Prometheus implementation
 	defer counterPrometheus.Add(1)
 	defer histogramPrometheus.Observe(time.Since(start).Seconds())
 
-	return sayHelloHandler
+	// Datadog implementation
+	defer c.Count("simpleapp_counter", 1, []string{"counter"}, 1)
+	defer c.Histogram("simpleapp_histogram", time.Since(start).Seconds(), []string{"histogram"}, 1)
+	return handler
 }
 
 func sayHelloHandler(w http.ResponseWriter, r *http.Request) {
