@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
 	"log"
 	"math/rand"
@@ -46,7 +47,7 @@ func main() {
 	rand.Seed(time.Now().Unix())
 
 	// Create the client
-	c, err := statsd.New("127.0.0.1:2113")
+	c, err := statsd.New("127.0.0.1:8125")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,7 +77,7 @@ func main() {
 			c.Count("demoapp_counter", rand.Int63()*5, []string{"counter"}, 1)
 			c.Gauge("demoapp_gauge", rand.Float64()*15-5, []string{"gauge"}, 1)
 			c.Histogram("demoapp_histogram", rand.Float64()*10, []string{"histogram"}, 1)
-			c.Set("demoapp_set", generateSet(rand.Intn(1)), []string{"set"}, 1)
+			c.Set("demoapp_set", strconv.Itoa(rand.Int()), []string{"set"}, 1)
 
 			time.Sleep(time.Second)
 		}
@@ -87,6 +88,6 @@ func main() {
 }
 
 func generateSet(index int) string {
-	values := []string{"dilan", "milea"}
+	values := []string{"11112", "11113", "11114", "11115", "11116"}
 	return values[index]
 }
