@@ -1,0 +1,21 @@
+version: '3.5'
+services:
+  simple-app:
+    image: localhost:5001/simple-app
+    network_mode: host
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+        reservations:
+          cpus: '0.25'
+          memory: 20M
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    build:
+      context: ./simple-app
+      dockerfile: ./Dockerfile
+    ports:
+      - "2112:2112"
