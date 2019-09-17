@@ -20,8 +20,7 @@ datadog/agent:latest
 
 2. Run Grafana
 ```
-docker run \                        
-  -d \
+docker run -d \
   -p 3000:3000 \
   --name=grafana \
   -e "GF_SERVER_ROOT_URL=http://grafana.server.name" \
