@@ -18,16 +18,12 @@ docker stack deploy --compose-file=portainer-agent-stack.yml portainer
 ### How To Run 
 1. Run Prometheus
 ```
-docker run --name prometheus -p 9090:9090 -v /tmp/prometheus.yml:$HOME/go/sr
-c/github.com/hengkyawijaya/prometheus/prometheus.yml prom/prometheus     
+docker run --name prometheus --net=host -p 9090:9090 -v $GOPATH/src/github.com/hengkyawijaya/monitoring-tools/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus  
 ```
 
 2. Run Datadog Agent
 ```
-DOCKER_CONTENT_TRUST=1 docker run --net=host -d --name dd-
-agent -p 8125:8125 -v /var/run/docker.sock:/var/run/docker.sock:ro -v /proc/:/host/proc/:ro -v /s
-ys/fs/cgroup/:/host/sys/fs/cgroup:ro -e DD_API_KEY=<YOUR_API_KEY> 
-datadog/agent:latest
+DOCKER_CONTENT_TRUST=1 docker run --net=host -d --name dd-agent -p 8125:8125 -v /var/run/docker.sock:/var/run/docker.sock:ro -v /proc/:/host/proc/:ro -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro -e DD_API_KEY=03ed27b263661e934bad7a3ce90a89ab datadog/agent:latest
 ```
 
 2. Run Grafana
