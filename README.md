@@ -3,6 +3,18 @@
 ### Prerequisite
 docker, docker-compose, dep (Golang package manager) must be installed
 
+Create docker cluster (Optional)
+```
+docker swarm init --advertise-addr <MANAGER-IP>
+```
+
+Install portainer swarm mode (Optional)
+```
+curl -L https://downloads.portainer.io/portainer-agent-stack.yml -o portainer-agent-stack.yml
+docker stack deploy --compose-file=portainer-agent-stack.yml portainer
+```
+
+
 ### How To Run 
 1. Run Prometheus
 ```
